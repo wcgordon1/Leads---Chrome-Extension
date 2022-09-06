@@ -4,24 +4,22 @@ const inputBtn = document.getElementById("input-btn")
 const ulEl = document.getElementById("ul-el")
 const deleteBtn = document.getElementById("delete-btn")
 const leadsFromLocalStorage = JSON.parse(localStorage.getItem("myLeads"))
-// 1. Grab the SAVE TAB button and store it in a tabBtn variable
 const tabBtn = document.getElementById("tab-btn")
+const exportNewEl = document.getElementById("export-new")
+let csvContent = "data:text/csv;charset=utf-8,";
 
 if (leadsFromLocalStorage) {
     myLeads = leadsFromLocalStorage
     render(myLeads)
 }
 
-const tabs = [
-    { url: "https://www.linkedin.com/in/per-harald-borgen/" }
-]
-
-tabBtn.addEventListener("click", function () {
-    myLeads.push(tabs[0].url)
-    localStorage.setItem("myLeads", JSON.stringify(myLeads))
-    render(myLeads)
-
-})
+/*tabBtn.addEventListener("click", function () {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        myLeads.push(tabs[0].url)
+        localStorage.setItem("myLeads", JSON.stringify(myLeads))
+        render(myLeads)
+    })
+}) */
 
 function render(leads) {
     let listItems = ""
@@ -50,3 +48,16 @@ inputBtn.addEventListener("click", function () {
     render(myLeads)
 })
 
+exportNewEl.addEventListener("click", function () {
+    myLeads.forEach(function (i) {
+        csvContent += myLeads + "\r\n";
+        let encodedUri = encodeURI(csvContent);
+        window.open(encodedUri);
+    });
+    let link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "my_data.csv");
+    document.body.appendChild(link); // Required for FF
+
+    link.click()
+})
